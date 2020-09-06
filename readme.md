@@ -1,37 +1,40 @@
-Mongo Sharded Cluster with Docker Compose
+Mongo Sharded Cluster com Docker Compose
 =========================================
-A simple sharded Mongo Cluster with a replication factor of 2 running in `docker` using `docker-compose`.
 
-Designed to be quick and simple to get a local or test environment up and running. Needless to say... DON'T USE THIS IN PRODUCTION!
+Um exemplo de cluster de MongoDB com shard usando fator de replication 2 com `docker` usando `docker-compose`.
 
-Heavily inspired by [https://github.com/jfollenfant/mongodb-sharding-docker-compose](https://github.com/jfollenfant/mongodb-sharding-docker-compose)
+Ele é rápido e simples apenas para teste, não seja tonto de usar isso em prod. 
 
-### Mongo Components
+Fork de ótimo trabalho de [https://github.com/chefsplate/mongo-shard-docker-compose](https://github.com/chefsplate/mongo-shard-docker-compose)
 
-* Config Server (3 member replica set): `config01`,`config02`,`config03`
-* 3 Shards (each a 2 member replica set):
+### Componentes do MongoDB
+
+* Config Server (replica set com 3 membros): `config01`,`config02`,`config03`
+
+* 3 Shards (cada um com um replica set de 2 membros):
 	* `shard01a`,`shard01b`
 	* `shard02a`,`shard02b`
 	* `shard03a`,`shard03b`
-* 1 Router (mongos): `router`
-* (TODO): DB data persistence using docker data volumes
 
-### First Run (initial setup)
-**Start all of the containers** (daemonized)
+* 1 Query Router (mongos): `router`
+
+### Setup inicial 
+
+**Subindo todos os containers** 
 
 ```
-docker-compose up -d
+docker-compose up
 ```
 
-**Initialize the replica sets (config server and shards) and router**
+** Inicializar os replica sets (config server e shards) and router**
 
 ```
 sh init.sh
 ```
 
-This script has a `sleep 20` to wait for the config server and shards to elect their primaries before initializing the router
+O script usa `sleep 20` para esperar o config server e os shards para eleger os primários antes de chamar o query router.
 
-**Verify the status of the sharded cluster**
+**Verificando o status do sharded cluster**
 
 ```
 docker-compose exec router mongo
@@ -61,21 +64,23 @@ mongos> sh.status()
   databases:
 ```
 
-### Normal Startup
-The cluster only has to be initialized on the first run. Subsequent startup can be achieved simply with `docker-compose up` or `docker-compose up -d`
+### Startup normal
 
-### Accessing the Mongo Shell
-Its as simple as:
+O cluster precisa ser inicializado apenas na primeira execução.
+
+As próximas execuções podem ser feitas com `docker-compose up` ou `docker-compose up -d`
+
+### Acessando pelo Mongo Shell
 
 ```
 docker-compose exec router mongo
 ```
 
-### Resetting the Cluster
-To remove all data and re-initialize the cluster, make sure the containers are stopped and then:
+### Removendo o cluster
+
+Para remover todos os dados do cluster:
 
 ```
+docker-compose stop
 docker-compose rm
 ```
-
-Execute the **First Run** instructions again.
