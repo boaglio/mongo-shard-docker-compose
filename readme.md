@@ -9,6 +9,7 @@ Fork de ótimo trabalho de [https://github.com/chefsplate/mongo-shard-docker-com
 
 ### Componentes do MongoDB
 
+
 * Config Server (replica set com 3 membros): `config01`,`config02`,`config03`
 
 * 3 Shards (cada um com um replica set de 2 membros):
@@ -20,60 +21,75 @@ Fork de ótimo trabalho de [https://github.com/chefsplate/mongo-shard-docker-com
 
 ### Setup inicial 
 
-**Subindo todos os containers** 
+** Subindo todos os containers
 
 ```
-docker-compose up
+# docker-compose up
 ```
 
-** Inicializar os replica sets (config server e shards) and router**
+** Inicializar os replica sets do config server
 
 ```
-sh init.sh
+# sh 1-init-config-server.sh
 ```
 
-O script usa `sleep 20` para esperar o config server e os shards para eleger os primários antes de chamar o query router.
-
-**Verificando o status do sharded cluster**
+** Inicializar os replica sets dos shards
 
 ```
-docker-compose exec router mongo
+# sh 2-init-shard1.sh
+# sh 3-init-shard2.sh
+# sh 4-init-shard3.sh
+```
+
+** Inicializar o query router
+
+```
+# sh 5-init-query-router.sh
+```
+
+** Verificando o status do sharded cluster
+
+```
+# mongo
 mongos> sh.status()
---- Sharding Status ---
+--- Sharding Status --- 
   sharding version: {
-	"_id" : 1,
-	"minCompatibleVersion" : 5,
-	"currentVersion" : 6,
-	"clusterId" : ObjectId("5981df064c97b126d0e5aa0e")
-}
+        "_id" : 1,
+        "minCompatibleVersion" : 5,
+        "currentVersion" : 6,
+        "clusterId" : ObjectId("5f558af95d69c51c51f98b53")
+  }
   shards:
-	{  "_id" : "shard01",  "host" : "shard01/shard01a:27018,shard01b:27018",  "state" : 1 }
-	{  "_id" : "shard02",  "host" : "shard02/shard02a:27019,shard02b:27019",  "state" : 1 }
-	{  "_id" : "shard03",  "host" : "shard03/shard03a:27020,shard03b:27020",  "state" : 1 }
+        {  "_id" : "shard01",  "host" : "shard01/shard01a:27018,shard01b:27018",  "state" : 1 }
+        {  "_id" : "shard02",  "host" : "shard02/shard02a:27019,shard02b:27019",  "state" : 1 }
+        {  "_id" : "shard03",  "host" : "shard03/shard03a:27020,shard03b:27020",  "state" : 1 }
   active mongoses:
-	"3.4.6" : 1
- autosplit:
-	Currently enabled: yes
+        "4.2.8" : 1
+  autosplit:
+        Currently enabled: yes
   balancer:
-	Currently enabled:  yes
-	Currently running:  no
-		Balancer lock taken at Wed Aug 02 2017 14:17:42 GMT+0000 (UTC) by ConfigServer:Balancer
-	Failed balancer rounds in last 5 attempts:  0
-	Migration Results for the last 24 hours:
-		No recent migrations
+        Currently enabled:  yes
+        Currently running:  no
+        Failed balancer rounds in last 5 attempts:  0
+        Migration Results for the last 24 hours: 
+                63 : Success
   databases:
+        {  "_id" : "config",  "primary" : "config",  "partitioned" : true }
+                config.system.sessions
+                        shard key: { "_id" : 1 }
+                        unique: false
+                        balancing: true
+                        chunks:
+                                shard01 961
+                                shard02 31
+                                shard03 32
+                        too many chunks to print, use verbose if you want to force print
 ```
-
-### Startup normal
-
-O cluster precisa ser inicializado apenas na primeira execução.
-
-As próximas execuções podem ser feitas com `docker-compose up` ou `docker-compose up -d`
-
+ 
 ### Acessando pelo Mongo Shell
 
 ```
-docker-compose exec router mongo
+# mongo
 ```
 
 ### Removendo o cluster
