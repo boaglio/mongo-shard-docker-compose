@@ -7,7 +7,7 @@ Ele é rápido e simples apenas para teste, não seja tonto de usar isso em prod
 
 Fork de ótimo trabalho de [https://github.com/chefsplate/mongo-shard-docker-compose](https://github.com/chefsplate/mongo-shard-docker-compose)
 
-### Componentes do MongoDB
+## Componentes do MongoDB
 
 
 * Config Server (replica set com 3 membros): `config01`,`config02`,`config03`
@@ -19,21 +19,21 @@ Fork de ótimo trabalho de [https://github.com/chefsplate/mongo-shard-docker-com
 
 * 1 Query Router (mongos): `router`
 
-### Setup inicial 
+## Setup  
 
-** Subindo todos os containers
+### Subindo todos os containers
 
 ```
 # docker-compose up
 ```
 
-** Inicializar os replica sets do config server
+### Inicializar os replica sets do config server
 
 ```
 # sh 1-init-config-server.sh
 ```
 
-** Inicializar os replica sets dos shards
+### Inicializar os replica sets dos shards
 
 ```
 # sh 2-init-shard1.sh
@@ -41,13 +41,13 @@ Fork de ótimo trabalho de [https://github.com/chefsplate/mongo-shard-docker-com
 # sh 4-init-shard3.sh
 ```
 
-** Inicializar o query router
+### Inicializar o query router
 
 ```
 # sh 5-init-query-router.sh
 ```
 
-** Verificando o status do sharded cluster
+### Verificando o status do sharded cluster
 
 ```
 # mongo
